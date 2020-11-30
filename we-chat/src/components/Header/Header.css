@@ -1,0 +1,30 @@
+
+.Header-Container {
+    display: flex;
+    justify-content: space-between;
+    width: 1035px;
+    height: 70px;
+    border: 1px solid;
+    background-color: #0C151C;
+
+    border-color: #0C151C;
+}
+
+.Header-Container-Quiz {
+    display: flex;
+    align-items: center;
+    width: auto;
+    height: auto;
+    color: #B2C0CC;
+    font-size: 25px;
+    padding-left: 25px;
+}
+
+.Header-Container-TimeRemaining {
+    display: flex;
+    align-items: flex-end;
+    padding: 10px;
+
+    color: #ff9999;
+    font-weight: 500;
+}
