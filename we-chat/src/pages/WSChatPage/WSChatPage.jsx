@@ -34,7 +34,7 @@ class WSChatPage extends React.Component{
         .catch((error)=>{
             console.log(error);
         });
-        
+
     }
     
     render(){
@@ -50,7 +50,6 @@ class WSChatPage extends React.Component{
             </WSChatPageContainer>
         )
     }
-} 
-    
+}
 
 export default WSChatPage;

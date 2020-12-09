@@ -12,3 +12,7 @@ app.use(cors());
 app.get('/', (req, res) => {
     res.send('<h1>Hello Express!</h1>')
 })
+
+var indexRouter = require('./routes/routtest.js');  // 루트 요청
+
+app.use('/login', indexRouter);
