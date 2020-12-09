@@ -26,10 +26,12 @@ let createNewUser = async (req, res) => {
         email: req.body.email,
         password: req.body.password
     };
+    console.log(newUser);
     try {
         await registerService.createNewUser(newUser);
         return res.redirect("/login");
     } catch (err) {
+        console.log(err);
         req.flash("errors", err);
         return res.redirect("/register");
     }

@@ -6,6 +6,7 @@ import {
     HeaderContainer,
     SideMenuContainer,
   } from './../../containers';
+import axios from 'axios';
   
 const WSChatPageContainer = styled.div`
     display: flex;
@@ -24,17 +25,32 @@ const WSChatPages = styled.div`
     flex-direction: column;
 `;
 
-const WSChatPage = () => {
-    return(
-        <WSChatPageContainer>
-            <WSChatPages>    
-                <HeaderContainer/>
-                <ChatContainer/>
-                <BottomContainer/>
-            </WSChatPages>  
-            <SideMenuContainer/>
-        </WSChatPageContainer>
-    )
-}
+class WSChatPage extends React.Component{
+    AAA(){
+        axios.get('http://localhost:3001/')
+        .then((response)=>{
+            console.log(response.data);
+        })
+        .catch((error)=>{
+            console.log(error);
+        });
+        
+    }
+    
+    render(){
+        this.AAA();
+        return(
+            <WSChatPageContainer>
+                <WSChatPages>    
+                    <HeaderContainer/>
+                    <ChatContainer/>
+                    <BottomContainer/>
+                </WSChatPages>  
+                <SideMenuContainer/>
+            </WSChatPageContainer>
+        )
+    }
+} 
+    
 
 export default WSChatPage;

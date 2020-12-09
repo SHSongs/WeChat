@@ -18,8 +18,9 @@ let createNewUser = (data) => {
 
             //create a new account
             DBConnection.query(
-                ' INSERT INTO users set ? ', userItem,
+                ' INSERT INTO users set ?  ', userItem,
                 function(err, rows) {
+                    console.log('hi');
                     if (err) {
                         reject(false)
                     }
