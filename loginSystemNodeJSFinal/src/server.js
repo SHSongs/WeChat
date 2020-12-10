@@ -1,65 +1,44 @@
-var express = require('express');
-var app = express();                // app은 express의 인스턴스
-var cors = require('cors');
-const port = 3001;
+require('dotenv').config();
+import express from "express";
+import configViewEngine from "./configs/viewEngine";
+import initWebRoutes from "./routes/web";
+import bodyParser from "body-parser";
+import cookieParser from 'cookie-parser';
+import session from "express-session";
+import connectFlash from "connect-flash";
+import passport from "passport";
 
-app.set('view engine', 'ejs')
+let app = express();
 
-app.use(cors());
+//use cookie parser
+app.use(cookieParser('secret'));
 
-
-var indexRouter = require('./routes/routtest.js');  // 루트 요청
-
-app.use('/login', indexRouter);
-
-
-//Listen on port 3001
-var server = app.listen(port)
-
-app.get("/", (req, res) => {
-    res.send("server is runnning");
-  });
-  
-
-//socket.io instantiation
-const io = require("socket.io")(server, {
-    handlePreflightRequest: (req, res) => {
-        const headers = {
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            "Access-Control-Allow-Origin": req.headers.origin, //or the specific origin you want to give access to,
-            "Access-Control-Allow-Credentials": true
-        };
-        res.writeHead(200, headers);
-        res.end();
+//config session
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24 // 86400000 1 day
     }
-});
+}));
 
+// Enable body parser post data
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-//listen on every connection
-io.on('connection', (socket) => {
-	console.log('New user connected')
+//Config view engine
+configViewEngine(app);
 
-	//default username
-	socket.username = "Anonymous"
+//Enable flash message
+app.use(connectFlash());
 
-    //listen on change_username
-    socket.on('change_username', (data) => {
-        socket.username = data.username
-    })
-      // 유저가 생성한 이벤트에 대한 처리 `on`
-    socket.on("sendMessage", (message, callback) => {
-    io.emit("message", { user: user.name, text: message });
-        console.log(message);
-    });
+//Config passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
-    //listen on new_message
-    socket.on('new_message', (data) => {
-        //broadcast the new message
-        io.sockets.emit('new_message', {message : data.message, username : socket.username});
-    })
+// init all web routes
+initWebRoutes(app);
 
-    //listen on typing
-    socket.on('typing', (data) => {
-    	socket.broadcast.emit('typing', {username : socket.username})
-    })
-})
+let port = process.env.PORT || 8080;
+app.listen(port, () => console.log(`Building a login system with NodeJS is running on port ${port}!`));
