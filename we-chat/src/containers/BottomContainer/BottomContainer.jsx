@@ -1,7 +1,21 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
-import { Send } from './../../components';
 import axios from 'axios';
+
+const SendPlace = styled.input`
+    display: flex;
+    width: 80%;
+    height: 40px;
+
+    margin-left: 20px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+
+    padding-left: 5px;
+    font-size: 19px;
+    outline: none;
+`;
 
 const Bottom = styled.div`
     display: flex;
@@ -36,15 +50,16 @@ const SendBtn = styled.button`
 `;
 
 const BottomContainer = () => {
+    const [message, setMessage] = useState('');
+
     function handleClick(e) {
         e.preventDefault();
         console.log('The link was clicked.');
-        axios.post('http://localhost:3001/login',{ username: "hihihi", password: "mm" })
+        axios.post('http://localhost:3001/send',{ 
+            message: message,
+         })
         .then((response)=>{
             console.log(response.data);
-            if(response.data === 1){
-                //메인페이지로
-            }
         })
         .catch((error)=>{
             console.log(error);
@@ -53,8 +68,8 @@ const BottomContainer = () => {
     return(
         <>
             <Bottom>
-                <Send/>
-                <SendBtn onClick={handleClick}>SD</SendBtn>
+                <SendPlace placeholder="Input Your Text" value={message} onChange={(e) => { setMessage(e.target.value) }}/>
+                <SendBtn onClick={handleClick}>SEND</SendBtn>
             </Bottom>
         </>
     )
