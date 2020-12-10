@@ -38,7 +38,14 @@ io.on('connection', (socket) => {
     //listen on new_message
     socket.on('new_message', (data) => {
         //broadcast the new message
+        console.log(data);
         io.sockets.emit('new_message', {message : data.message, username : socket.username});
+    })
+
+    socket.on('new_anwser', (data) => {
+        //broadcast the new message
+        console.log(data.anwser);
+        io.sockets.emit('new_anwser', {anwser : data.anwser, username : socket.username});
     })
 
     //listen on typing
