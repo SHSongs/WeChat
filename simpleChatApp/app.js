@@ -29,6 +29,7 @@ io.on('connection', (socket) => {
 
 	//default username
 	socket.username = "Anonymous"
+    socket.submit_anwser = false;
 
     //listen on change_username
     socket.on('change_username', (data) => {
@@ -45,11 +46,20 @@ io.on('connection', (socket) => {
     socket.on('new_anwser', (data) => {
         //broadcast the new message
         console.log(data.anwser);
-        io.sockets.emit('new_anwser', {anwser : data.anwser, username : socket.username});
+
+        if (socket.submit_anwser == false){
+            io.sockets.emit('new_anwser', {anwser : data.anwser, username : socket.username});
+            
+            socket.submit_anwser = true;
+        }
+        else{
+            io.sockets.emit('alert_error', {message : "정답은 한번만 제출가능합니다."});
+        }
     })
 
     //listen on typing
     socket.on('typing', (data) => {
     	socket.broadcast.emit('typing', {username : socket.username})
     })
+
 })

@@ -55,6 +55,10 @@ $(function(){
 	socket.on('typing', (data) => {
 		feedback.html("<p><i>" + data.username + " is typing a message..." + "</i></p>")
 	})
+
+	socket.on("alert_error", (data) => {
+		alert(data.message);
+	})
 });
 
 
