@@ -1,0 +1,4 @@
+// bin/www
+
+// var server = http.createServer(app); 아래 추가
+app.io.attach(server);
