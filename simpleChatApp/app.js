@@ -29,6 +29,18 @@ connection.query('SELECT email FROM users', function(err, results, fields) {
   });
 
 
+insertName = function(name){
+    var sql = 'INSERT INTO mydatabase.users (`fullname`) VALUES (?)';
+    var values = [name];
+    connection.query(sql, values, function(err, results, fields) {
+      if (err) {
+        console.log(err);
+      }
+      console.log(results);
+    });
+  
+}
+
 //set the template engine ejs
 app.set('view engine', 'ejs')
 
@@ -61,6 +73,7 @@ io.on('connection', (socket) => {
     //listen on change_username
     socket.on('change_username', (data) => {
         socket.username = data.username
+        insertName(data.username);
     })
 
     //listen on new_message
