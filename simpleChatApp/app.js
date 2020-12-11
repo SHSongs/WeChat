@@ -41,6 +41,18 @@ insertName = function(name){
   
 }
 
+insertChatLog = function(message,data, username){
+  var sql = 'INSERT INTO mydatabase.chat_log (message) VALUES (?)';
+  var values = [message];
+  connection.query(sql, values, function(err, results, fields) {
+    if (err) {
+      console.log(err);
+    }
+    console.log(results);
+  });
+
+}
+
 //set the template engine ejs
 app.set('view engine', 'ejs')
 
@@ -81,6 +93,7 @@ io.on('connection', (socket) => {
         //broadcast the new message
         console.log(data);
         io.sockets.emit('new_message', {message : data.message, username : socket.username});
+        insertChatLog(data.message, "000", socket.username);
     })
 
     socket.on('new_anwser', (data) => {
