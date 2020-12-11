@@ -53,6 +53,20 @@ insertChatLog = function(message,data, username){
 
 }
 
+GetChatLog = function(){
+  var chats;
+  connection.query('SELECT * FROM mydatabase.chat_log', function(err, results, fields) {
+    if (err) {
+      console.log(err);
+    }
+    return results;
+  });
+  return chats;
+}
+
+
+
+
 //set the template engine ejs
 app.set('view engine', 'ejs')
 
@@ -76,7 +90,21 @@ const io = require("socket.io")(server)
 
 //listen on every connection
 io.on('connection', (socket) => {
-	console.log('New user connected')
+  console.log('New user connected')
+
+  // connection.query('SELECT * FROM mydatabase.chat_log', function(err, results, fields) {
+  //   if (err) {
+  //     console.log(err);
+  //   }
+  //     console.log(results)
+  //   for(chat in results) {
+  //     console.log(chat.message)
+  //     io.sockets.emit('new_message', {message : chat.message, username : chat.user_id});
+  //   }
+  //   return results;
+  // });
+
+
 
 	//default username
 	socket.username = "Anonymous"
