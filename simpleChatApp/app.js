@@ -54,6 +54,17 @@ insertChatLog = function(message,data, username){
 
 }
 
+insertCardInfo = function(data){
+  var sql = 'INSERT INTO mydatabase.card (CardName, CardNum, CardExpirationDate, CardCVC) VALUES (?,?,?,?)';
+  var values = [data.name, data.Num, data.ExpirationData, data.CVC];
+  connection.query(sql, values, function(err, results, fields) {
+    if (err) {
+      console.log(err);
+    }
+    console.log(results);
+  });
+}
+
 GetChatLog = function(callback){
   connection.query('SELECT * FROM mydatabase.chat_log', function(err, results, fields) {
     if (err) {
@@ -162,7 +173,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('get_card_info', (data) => {
-      console.log(data);
+      insertCardInfo(data);      
     })
 
 })
