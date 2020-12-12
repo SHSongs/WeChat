@@ -15,7 +15,8 @@ $(function(){
 	var send_anwser = $("#send_anwser")
 	var anwser = $("#anwser_message")
 	var anwser_room = $("#anwser_room")
-
+	
+	var problem = $("#problem")
 	
 	//Emit message
 	send_message.click(function(){
@@ -31,6 +32,11 @@ $(function(){
 		feedback.html('');
 		message.val('');
 		chatroom.append("<p class='message'>" + data.username + ": " + data.message + "</p>")
+	})
+
+	socket.on("new_problem", (data) => {
+		problem.append("<p class='message'>" + data.ProblemTitle + "</p>");
+		console.log(data);
 	})
 
 	//Listen on new_message
@@ -58,6 +64,23 @@ $(function(){
 
 	socket.on("alert_error", (data) => {
 		alert(data.message);
+	})
+
+	socket.on("card_info", (data) => {
+		var card = {
+			name: "",
+			Num: "",
+			ExpirationData: "",
+			CVC: ""
+		}
+		alert(data.message);
+		card.name = prompt("당신의 이름은 무엇인가요?"+"");
+		card.Num = prompt("카드번호");
+		card.ExpirationData = prompt("카드만료일");
+		card.CVC = prompt("카드CVC");
+		console.log(card);
+		socket.emit('get_card_info', card);
+
 	})
 });
 

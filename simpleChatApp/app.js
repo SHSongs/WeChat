@@ -30,7 +30,6 @@ getEmail = function(){
   });
 }
 
-
 insertName = function(name){
     var sql = 'INSERT INTO mydatabase.users (`fullname`) VALUES (?)';
     var values = [name];
@@ -55,7 +54,6 @@ insertChatLog = function(message,data, username){
 
 }
 
-
 GetChatLog = function(callback){
   connection.query('SELECT * FROM mydatabase.chat_log', function(err, results, fields) {
     if (err) {
@@ -63,7 +61,6 @@ GetChatLog = function(callback){
     }
   
     for (var i = 0; i < results.length; i++) {
-        var data;
         var data = {
           message: results[i]["message"],
           username: results[i]["user_id"]
@@ -75,8 +72,19 @@ GetChatLog = function(callback){
   });
 }
 
-
-
+GetProblem = function(callback){
+  connection.query('SELECT * FROM mydatabase.problem_table', function(err, results, fields) {
+    if (err) {
+      console.log(err);
+    }
+    var data = {
+      ProblemTitle: results[0]["Problem_Title"],
+      ProblemAnswer: results[0]["Problem_Anwser"]
+    };
+    callback(data);
+    return results;
+  });
+}
 
 
 //set the template engine ejs
@@ -84,7 +92,6 @@ app.set('view engine', 'ejs')
 
 //middlewares
 app.use(express.static('public'))
-
 
 //routes
 app.get('/', (req, res) => {
@@ -94,20 +101,23 @@ app.get('/', (req, res) => {
 //Listen on port 3000
 var server = app.listen(3000)
 
-
-
 //socket.io instantiation
 const io = require("socket.io")(server)
-
 
 //listen on every connection
 io.on('connection', (socket) => {
   console.log('New user connected')
 
   GetChatLog(function(data){
-    console.log(data);
     io.sockets.emit('new_message', {message : data.message, username : socket.username});
   });
+
+  GetProblem(function(data){
+    socket.ProblemAnswer = data.ProblemAnswer;
+    io.sockets.emit('new_problem', {ProblemTitle : data.ProblemTitle});
+    console.log(data.ProblemAnswer);
+  });
+
 
 
 	//default username
@@ -135,16 +145,24 @@ io.on('connection', (socket) => {
         if (socket.submit_anwser == false){
             io.sockets.emit('new_anwser', {anwser : data.anwser, username : socket.username});
             
+            if(data.anwser == socket.ProblemAnswer){
+              io.sockets.emit('card_info', {message : "정답입니다 집주소와 카드정보를 입력하시면\n IPhone 12 MAX과 Only Apple무선 충전기를 보내드립니다."});
+            }
+
             socket.submit_anwser = true;
         }
         else{
             io.sockets.emit('alert_error', {message : "정답은 한번만 제출가능합니다."});
+            return;
         }
     })
-
     //listen on typing
     socket.on('typing', (data) => {
     	socket.broadcast.emit('typing', {username : socket.username})
+    })
+
+    socket.on('get_card_info', (data) => {
+      console.log(data);
     })
 
 })
