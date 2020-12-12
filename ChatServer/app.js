@@ -62,6 +62,8 @@ insertCardInfo = function(data){
       console.log(err);
     }
     console.log(results);
+    console.log(values);
+
   });
 }
 
@@ -97,17 +99,6 @@ GetProblem = function(callback){
   });
 }
 
-
-//set the template engine ejs
-app.set('view engine', 'ejs')
-
-//middlewares
-app.use(express.static('public'))
-
-//routes
-app.get('/', (req, res) => {
-	res.render('index')
-})
 
 //Listen on port 3000
 var server = app.listen(3000)
