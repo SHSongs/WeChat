@@ -21,12 +21,14 @@ connection.connect(function(err) {
   console.log("Database connected!");
 });
 
-connection.query('SELECT email FROM users', function(err, results, fields) {
+getEmail = function(){
+  connection.query('SELECT email FROM users', function(err, results, fields) {
     if (err) {
       console.log(err);
     }
     console.log(results);
   });
+}
 
 
 insertName = function(name){
@@ -53,16 +55,26 @@ insertChatLog = function(message,data, username){
 
 }
 
-GetChatLog = function(){
-  var chats;
+
+GetChatLog = function(callback){
   connection.query('SELECT * FROM mydatabase.chat_log', function(err, results, fields) {
     if (err) {
       console.log(err);
     }
+  
+    for (var i = 0; i < results.length; i++) {
+        var data;
+        var data = {
+          message: results[i]["message"],
+          username: results[i]["user_id"]
+        };
+        callback(data);
+    }
+   
     return results;
   });
-  return chats;
 }
+
 
 
 
@@ -92,18 +104,10 @@ const io = require("socket.io")(server)
 io.on('connection', (socket) => {
   console.log('New user connected')
 
-  // connection.query('SELECT * FROM mydatabase.chat_log', function(err, results, fields) {
-  //   if (err) {
-  //     console.log(err);
-  //   }
-  //     console.log(results)
-  //   for(chat in results) {
-  //     console.log(chat.message)
-  //     io.sockets.emit('new_message', {message : chat.message, username : chat.user_id});
-  //   }
-  //   return results;
-  // });
-
+  GetChatLog(function(data){
+    console.log(data);
+    io.sockets.emit('new_message', {message : data.message, username : socket.username});
+  });
 
 
 	//default username
